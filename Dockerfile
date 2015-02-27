@@ -18,9 +18,7 @@ RUN \
   apt-get install -y lsb-release apt-utils && \
   echo "deb http://http.debian.net/debian `lsb_release -cs`-backports main contrib non-free" > /etc/apt/sources.list.d/backports.list && \
   apt-get update -q && \
-  echo 'Europe/Paris' > /etc/timezone && \
-  dpkg-reconfigure tzdata && \
-  apt-get install -t wheezy-backports -y --no-install-recommends unzip vim jq curl dnsutils apt-utils && \
+  apt-get install -t wheezy-backports -y --no-install-recommends unzip vim jq curl dnsutils && \
   curl -s http://apt.vixns.net/vixns.gpg | apt-key add - && \
   echo "deb http://apt.vixns.net `lsb_release -cs` main contrib non-free" > /etc/apt/sources.list.d/vixns.list && \
   apt-get update -q && \
@@ -32,9 +30,5 @@ RUN \
 
 RUN /usr/local/bin/remove_doc
 
-COPY ./runsvdir-start /usr/local/sbin/runsvdir-start
 COPY ./dig-srv.sh /usr/bin/dig-srv
-RUN chmod +x /usr/local/sbin/runsvdir-start /usr/bin/dig-srv
-
-
-ENTRYPOINT ["/usr/local/sbin/runsvdir-start"]
+RUN chmod +x /usr/bin/dig-srv
