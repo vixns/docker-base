@@ -7,4 +7,4 @@ do
   ip=$(dig srv +noanswer $dn | grep "$entry" | awk '{print $NF}')
   res="${res}${ip}:$(dig +short srv $dn | grep "$entry" | awk '{print $(NF-1)}'),";
 done
-echo ${res%","}
+[ -z "$res" ] || echo ${res%","}
