@@ -4,16 +4,16 @@
 
 FROM debian:jessie
 MAINTAINER Stéphane Cottin <stephane.cottin@vixns.com>
-ENV DEBIAN_FRONTEND noninteractive
 
 # Add filters for documentation
-ADD dpkg_nodoc /etc/dpkg/dpkg.cfg.d/01_nodoc
-ADD dpkg_nolocales /etc/dpkg/dpkg.cfg.d/01_nolocales
-ADD apt_nocache /etc/apt/apt.conf.d/02_nocache
-ADD remove_doc.sh /usr/local/bin/remove_doc
-RUN echo "force-unsafe-io" > /etc/dpkg/dpkg.cfg.d/02apt-speedup
+COPY dpkg_nodoc /etc/dpkg/dpkg.cfg.d/01_nodoc
+COPY dpkg_nolocales /etc/dpkg/dpkg.cfg.d/01_nolocales
+COPY apt_nocache /etc/apt/apt.conf.d/02_nocache
+COPY remove_doc.sh /usr/local/bin/remove_doc
+COPY ./dig-srv.sh /usr/bin/dig-srv
 
 RUN \
+  echo "force-unsafe-io" > /etc/dpkg/dpkg.cfg.d/02apt-speedup && \
   export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && \
   apt-get install -y lsb-release apt-utils && \
@@ -27,9 +27,6 @@ RUN \
   apt-get -y autoremove && \
   apt-get -y autoclean && \
   apt-get -y clean && \
-  rm -rf /var/lib/apt/lists/*
-
-RUN /usr/local/bin/remove_doc
-
-COPY ./dig-srv.sh /usr/bin/dig-srv
-RUN chmod +x /usr/bin/dig-srv
+  rm -rf /var/lib/apt/lists/* && \
+  /usr/local/bin/remove_doc && \
+  chmod +x /usr/bin/dig-srv
